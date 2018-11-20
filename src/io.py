@@ -6,21 +6,11 @@ import seaborn as sns
 from scipy.integrate import trapz
 
 def readFile(name):
-    with open('../data/ML-CUP18-TR.csv', newline='') as csvfile:
-        spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
-        start = False
-        df = []
-        for row in spamreader:
-            if start:
-                df.append(row)
-            if row == []:
-                start = True
-    df = pd.DataFrame(df)
+    df = pd.read_csv(name, delimiter=',', comment='#', header=None)
     df = df.astype(float)
     return df
 
 df = readFile('../data/ML-CUP18-TR.csv')
-#I know it's soo ugly but I haven't found ho to avoid # lines with pandas
 
 #distribution plot
 plt.figure()
@@ -38,9 +28,3 @@ for i in range(df.shape[1] - 2, df.shape[1]):
     sns.boxplot(df[i])
     '''
 plt.show()
-plt.show()
-
-
-
-
-
