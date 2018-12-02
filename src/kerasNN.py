@@ -71,6 +71,7 @@ def main():
         print("\n Time: %.2f" % (time.time() - start_time))
         #loss_and_metrics = model.evaluate(x_train, y_train, batch_size=128)
         showresult(history)
+        print("mod")
         
 
 
