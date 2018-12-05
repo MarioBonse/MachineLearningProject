@@ -57,7 +57,6 @@ def main():
         start_time = time.time()
         #data creation
         TrainingData = datacontrol.readFile("../data/ML-CUP18-TR.csv")
-        TestData = datacontrol.readFile("../data/ML-CUP18-TS.csv")
         x_train, y_train = datacontrol.divide(TrainingData)
         # preprocessing
         #x_train = sklearn.preprocessing.scale(x_train, axis=0, with_mean=True, with_std=True, copy=True)
@@ -72,7 +71,6 @@ def main():
         #loss_and_metrics = model.evaluate(x_train, y_train, batch_size=128)
         showresult(history)
         
-
 
 if __name__ == "__main__":
     main()

@@ -13,7 +13,7 @@ NetworArchitecture = [100, 100, 100, 100]
 activation = "relu"
 lastlayeractivation = "softmax"
 eta = 0.01
-epochs = 500
+n_epoch = 500
 momentum = 0.5
 nesterov = True
 batch_size = 200
@@ -38,12 +38,12 @@ def main():
     model = newModule(input_dimention, output_dimention)
     optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
     loss_fn = torch.nn.MSELoss(reduction='sum')
-    for t in range(500):
+    for epoch in range(n_epoch):
         # Forward pass: compute predicted y by passing x to the model.
-        y_pred = model(x_train[t,:])
+        y_pred = model(x_train)
         # Compute and print loss.
         loss = loss_fn(y_pred, y_train)
-        print(t, loss.item())
+        print(loss.item())
 
         # Before the backward pass, use the optimizer object to zero all of the
         # gradients for the variables it will update (which are the learnable
@@ -63,3 +63,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+main()
