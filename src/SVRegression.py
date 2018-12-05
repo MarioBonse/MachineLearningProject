@@ -7,6 +7,7 @@ from sklearn import svm
 from sklearn.model_selection import StratifiedKFold
 from sklearn.multioutput import MultiOutputRegressor
 from sklearn.model_selection import train_test_split
+from sklearn.model_selection import cross_val_score
 import matplotlib.pyplot as plt
 import time
 import validation
@@ -30,12 +31,20 @@ def main():
     start_time = time.time()
     svr = svm.SVR()
     SVRegressor = MultiOutputRegressor(svr, n_jobs= 2)
-    scores = validation.kFoldCross(SVRegressor.fit, SVRegressor.score, x_train, y_train)
-    print("Time: %0.2f" % (time.time() - start_time))
-    print("Errors are: ",scores,"")
+    # I can evaluate the model also with cross Validation
+    # CrossValidationScores = cross_val_score(SVRegressor, x_train, y_train, cv=5)
+    # I can evaluate the model with kfold validation
+    scores = validation.kFoldCross(SVRegressor.fit, SVRegressor.score, x_train, y_train, n_splits=5 )
     scores = np.array(scores)
-    print("With mean %0.2f and variance %0.2f" % (scores.mean(), scores.std()*2))
-    print("Hiper_parameters: ....")
+    print("\n")
+    for i in scores:
+        print("loss: %.2f" % (i))
+    print("Time: %0.2f" % (time.time() - start_time))
+
+    print("%0.2f (+/- %0.2f)" % (scores.mean(), scores.std()*2))
+    #print("Errors are with CrossValidation are: ", CrossValidationScores, "")
+    #print("With mean %0.2f and variance %0.2f" %(CrossValidationScores.mean(), CrossValidationScores.std()*2))
+    print("HyperParameters: ....")
 
 
 if __name__ == "__main__":

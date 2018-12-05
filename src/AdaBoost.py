@@ -24,11 +24,11 @@ def main():
     SVRegressor = MultiOutputRegressor(regr_2, n_jobs=2)
     scores = validation.kFoldCross(SVRegressor.fit, SVRegressor.score, x_train, y_train)
     print("Time: %0.2f" % (time.time() - start_time))
-    print("Errors are: ", scores, "")
     scores = np.array(scores)
-    print("With mean %0.2f and variance %0.2f" %
-          (scores.mean(), scores.std()*2))
-    print("Hiper_parameters: ....")
+    for i in scores:
+        print("loss: %.2f" % (i))
+    print("%0.2f (+/- %0.2f)" % (scores.mean(), scores.std()*2))
+    print("HyperParameters: ....")
 
 
 if __name__ == "__main__":

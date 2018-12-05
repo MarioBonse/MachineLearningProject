@@ -11,5 +11,6 @@ def kFoldCross(trainCallback, scoreCallback, x_train, y_train, n_splits=4):
         trainCallback(X_train, Y_train)
         score = scoreCallback(x_test, y_test)
         result.append(score)
+        #print("loss: %.2f"%(score))
     return result
         

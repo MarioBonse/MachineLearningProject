@@ -6,16 +6,18 @@ import numpy as np
 import pandas as pd
 import datacontrol
 import sklearn
+from sklearn.model_selection import KFold
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import time
 from sklearn.model_selection import StratifiedKFold
+import validation
 
 
-NetworArchitecture = [20, 20]
+NetworArchitecture = [50]
 activation = "relu"
 eta = 0.001
-epochs = 2000
+epochs = 500
 momentum = 0.9
 nesterov = True
 batch_size = 400
@@ -26,7 +28,7 @@ def createModel(input_dimention, output_dimention):
     for node in NetworArchitecture[1:]:
         model.add(Dense(units=node, activation=activation))
     model.add(Dense(units=output_dimention))
-    model.compile(metrics=['acc'], loss=keras.losses.mean_squared_error, optimizer=keras.optimizers.SGD(lr=eta, momentum=momentum, nesterov=nesterov))
+    model.compile(loss=keras.losses.mean_squared_error, optimizer=keras.optimizers.SGD(lr=eta, momentum=momentum, nesterov=nesterov))
     return model
 
 def showresult(history):
@@ -63,14 +65,22 @@ def main():
         input_dimention = x_train.shape[1]
         output_dimention = y_train.shape[1]
         model = createModel(input_dimention, output_dimention)
-        
-        # x_train and y_train are Numpy arrays --just like in the Scikit-Learn API.
-        history = model.fit(x_train, y_train, validation_split=0.2, epochs=epochs, batch_size=batch_size, verbose=0)
-        print(model.summary())
+        # Now we will use k_fold in order to validate the model
+        kf = KFold(n_splits=5)
+        result = []
+        history_array = []
+        for train, test in kf.split(x_train):
+            X_train, x_test, Y_train, y_test = x_train[train], x_train[test], y_train[train], y_train[test]
+            history = model.fit(X_train, Y_train,epochs=epochs, batch_size=batch_size, verbose=0)
+            # x_train and y_train are Numpy arrays --just like in the Scikit-Learn API.
+            scores = model.evaluate(x_test, y_test, verbose=0)
+            result.append(scores)
+            history_array.append(history)
+            #loss_and_metrics = model.evaluate(x_train, y_train, batch_size=128)
+            #showresult(history)
+            print("%s: %.2f" % (model.metrics_names[0], scores))
         print("\n Time: %.2f" % (time.time() - start_time))
-        #loss_and_metrics = model.evaluate(x_train, y_train, batch_size=128)
-        showresult(history)
-        
+        print("%.2f (+/- %.2f)" %(np.mean(result), np.std(result)))
 
 if __name__ == "__main__":
     main()
