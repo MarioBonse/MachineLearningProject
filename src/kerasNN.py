@@ -72,6 +72,5 @@ def main():
         showresult(history)
         
 
-
 if __name__ == "__main__":
     main()
