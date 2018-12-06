@@ -3,6 +3,7 @@ import sklearn
 from sklearn.multioutput import MultiOutputRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import AdaBoostRegressor
+from sklearn import svm
 import matplotlib.pyplot as plt
 import time
 import datacontrol
@@ -20,10 +21,11 @@ def main():
     #x_train = sklearn.preprocessing.scale(x_train, axis=0, with_mean=True, with_std=True, copy=True)
     #########
     start_time = time.time()
-    regr_2 = AdaBoostRegressor(DecisionTreeRegressor(max_depth=4),n_estimators=300)
+    #regr_2 = AdaBoostRegressor(svm.SVR(kernel='rbf', gamma=0.1, coef0=-1, degree=5), n_estimators=100)
+    regr_2 = AdaBoostRegressor(DecisionTreeRegressor(max_depth=4),n_estimators=1000)
     SVRegressor = MultiOutputRegressor(regr_2, n_jobs=2)
-    scores = validation.kFoldCross(SVRegressor.fit, SVRegressor.score, x_train, y_train)
-    print("Time: %0.2f" % (time.time() - start_time))
+    scores = validation.kFoldCross(SVRegressor.fit, SVRegressor.predict, x_train, y_train)
+    print("Time: %0.2f" % (time.time() - start_time), "\n\nRESULT")
     scores = np.array(scores)
     for i in scores:
         print("loss: %.2f" % (i))

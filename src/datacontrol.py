@@ -6,11 +6,14 @@ import seaborn as sns
 from scipy.integrate import trapz
 import datetime
 import sklearn.preprocessing
+from random import shuffle
+
 def readFile(name):
     df = pd.read_csv(name, delimiter=',', comment='#', header=None)
     df = df.astype(float)
     #in order to return numpy object 
     df_numpy = df.values[:, 1:]
+    shuffle(df_numpy)
     return df_numpy
 
 # give a dataframe it divide it in two parts

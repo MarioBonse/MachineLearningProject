@@ -18,7 +18,11 @@ import validation
 # link: https://scikit-learn.org/stable/modules/generated/sklearn.multioutput.MultiOutputRegressor.html
 ##################################################
 
-
+#h Hiper parameters
+kernel = 'linear'
+C = 1e3
+gamma = 0.1
+degree = 0 #only if poly kernel
 def main():
     #data creation
     TrainingData = datacontrol.readFile("../data/ML-CUP18-TR.csv")
@@ -29,18 +33,17 @@ def main():
     #x_train = sklearn.preprocessing.scale(x_train, axis=0, with_mean=True, with_std=True, copy=True)
     #########
     start_time = time.time()
-    svr = svm.SVR()
+    svr = svm.SVR(kernel='rbf', gamma=0.1, coef0=-1, degree=5)
     SVRegressor = MultiOutputRegressor(svr, n_jobs= 2)
     # I can evaluate the model also with cross Validation
     # CrossValidationScores = cross_val_score(SVRegressor, x_train, y_train, cv=5)
     # I can evaluate the model with kfold validation
-    scores = validation.kFoldCross(SVRegressor.fit, SVRegressor.score, x_train, y_train, n_splits=5 )
+    scores = validation.kFoldCross(SVRegressor.fit, SVRegressor.predict, x_train, y_train, n_splits=5 )
     scores = np.array(scores)
     print("\n")
+    print("Time: %0.2f" % (time.time() - start_time),"\n\nRESULT")
     for i in scores:
         print("loss: %.2f" % (i))
-    print("Time: %0.2f" % (time.time() - start_time))
-
     print("%0.2f (+/- %0.2f)" % (scores.mean(), scores.std()*2))
     #print("Errors are with CrossValidation are: ", CrossValidationScores, "")
     #print("With mean %0.2f and variance %0.2f" %(CrossValidationScores.mean(), CrossValidationScores.std()*2))
