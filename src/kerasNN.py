@@ -17,15 +17,15 @@ from sklearn.preprocessing import StandardScaler
 import validation
 
 
-NetworArchitecture = [100, 100, 100]
+NetworArchitecture = [100]
 activation = "relu"
 eta = 0.001
 DropOutInput = 0
-DropOutHiddenLayer = 0.2
-epochs = 4000
+DropOutHiddenLayer = 0
+epochs = 10000
 momentum = 0.9
 nesterov = True
-batch_size = 256
+batch_size = 1
 Not_yet_printed = True
 
 #######################################################
@@ -82,7 +82,7 @@ def main():
     with tf.device('/device:GPU:0'):
         start_time = time.time()
         #data creation
-        TrainingData = datacontrol.readFile("../data/ML-CUP18-TR.csv")
+        TrainingData = datacontrol.readFile("data/ML-CUP18-TR.csv")
         x_train, y_train = datacontrol.divide(TrainingData)
         # preprocessing
         #x_train = sklearn.preprocessing.scale(x_train, axis=0, with_mean=True, with_std=True, copy=True)
@@ -119,6 +119,8 @@ def main():
         #    showresult(history)
         print("\n Time: %.2f" % (time.time() - start_time))
         print("%.2f (+/- %.2f)" %(np.mean(result), np.std(result)))
+        for res in history_array:
+            showresult(res)
 
 if __name__ == "__main__":
     main()

@@ -19,12 +19,12 @@ import csv
 ##################################################
 
 # Hiper parameters
-kernels = ['rbf']#, 'poly', 'sigmoid']
-C_range = [0.1, 0.1, 1, 10, 100]
-degree_range = [1]#, 2, 3, 4] #only in poly
-coef_range = [0]#, 1, 2, 10]  # only in ply and sigmoid!
+kernels = ['rbf', 'poly']
+C_range = [ 1, 10, 100]
+degree_range = [1, 2, 3, 4, 5] #only in poly
+coef_range = [0, 1, 10]  # only in ply and sigmoid!
 gamma_range = 'scale'
-epsilon = [0.1, 0.01, 0.001, 0.5]
+epsilon = [0.1, 0.01, 0.001]
 
 class HyperParameterSVM:
     def __init__(self, C, gamma, epsilon, degree, kernel, coef):
@@ -62,10 +62,13 @@ class HyperParameterTesterSVM:
                     elif k == 'sigmoid':
                         for coeff in coef_range:
                             self.HyperParameterArray.append(HyperParameterSVM(C, gamma, e, 0, k, coeff))
-                    else:
+                    elif k == 'rbf':
                         self.HyperParameterArray.append(HyperParameterSVM(C, gamma, e, 0, k, 0))
 
     def simulate(self, x_train, y_train):
+        writer = csv.writer(open("CSVResult/CSVResultDuringSimulation.csv", 'w'))
+        writer.writerow(["mean", "deviation", "C", "epsilon", "gamma", "degree", "kernel", "coef",
+                         "time", "kfold"])
         for simulation in self.HyperParameterArray:
             start_time = time.time()
             svr = svm.SVR(kernel=simulation.kernel, gamma=simulation.gamma, coef0=simulation.coef, degree=simulation.degree, C = simulation.C, epsilon=simulation.epsilon)
@@ -80,15 +83,16 @@ class HyperParameterTesterSVM:
             simulation.SaveResult(scores, timeSimulation)
             print("\n")
             print("%0.2f (+/- %0.2f)" % (scores.mean(), scores.std()*2))
-            param = SVRegressor.get_params()
+            param = simulation.getValue()
             print(param, "time: %0.2f" % timeSimulation)
+            writer.writerow(param)
 
     def sort(self):
         self.HyperParameterArray.sort(key=lambda x: x.mean)
 
         
     def saveCSV(self):
-        writer = csv.writer(open("CSVResult/CSVResult.csv", 'w'))
+        writer = csv.writer(open("CSVResult/CSVResultFinal.csv", 'w'))
         writer.writerow(["mean", "deviation", "C", "epsilon", "gamma", "degree", "kernel", "coef",
                          "time", "kfold"])
         for results in self.HyperParameterArray:
