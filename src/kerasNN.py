@@ -17,15 +17,15 @@ from sklearn.preprocessing import StandardScaler
 import validation
 
 
-NetworArchitecture = [100]
+NetworArchitecture = [100, 100, 100, 100, 100]
 activation = "relu"
 eta = 0.001
 DropOutInput = 0
 DropOutHiddenLayer = 0
-epochs = 10000
-momentum = 0.9
-nesterov = True
-batch_size = 1
+epochs = 3000
+momentum = 0
+nesterov = False
+batch_size = 32
 Not_yet_printed = True
 
 #######################################################
@@ -61,7 +61,7 @@ def createModel(input_dimention, output_dimention):
                 print("No drop out in the hidden layer")
             model.add(Dense(units=node, activation=activation))
         Not_yet_printed = False
-    model.add(Dense(units=output_dimention))
+    model.add(Dense(units=output_dimention, activation = "linear"))
     model.compile(loss=keras.losses.mean_squared_error, optimizer=keras.optimizers.SGD(lr=eta, momentum=momentum, nesterov=nesterov))
     return model
 
@@ -82,7 +82,7 @@ def main():
     with tf.device('/device:GPU:0'):
         start_time = time.time()
         #data creation
-        TrainingData = datacontrol.readFile("data/ML-CUP18-TR.csv")
+        TrainingData = datacontrol.readFile("../data/ML-CUP18-TR.csv")
         x_train, y_train = datacontrol.divide(TrainingData)
         # preprocessing
         #x_train = sklearn.preprocessing.scale(x_train, axis=0, with_mean=True, with_std=True, copy=True)
@@ -90,6 +90,7 @@ def main():
         output_dimention = y_train.shape[1]
         # Now we will use k_fold in order to validate the model
         kf = KFold(n_splits=5)
+        
         # scaler for NN
         scaler = StandardScaler()
         result = []
@@ -103,7 +104,8 @@ def main():
             scaler.fit(X_train)
             X_train = scaler.transform(X_train)
             x_test = scaler.transform(x_test)
-            history = model.fit(X_train, Y_train, validation_data= (x_test, y_test), epochs=epochs, batch_size=batch_size, verbose=0)
+            history = model.fit(X_train, Y_train, shuffle = True, validation_data=(
+                x_test, y_test), epochs=epochs, batch_size=batch_size, verbose=0)
             # x_train and y_train are Numpy arrays --just like in the Scikit-Learn API.
             scores = model.evaluate(x_test, y_test, verbose=0)
             result.append(scores)
