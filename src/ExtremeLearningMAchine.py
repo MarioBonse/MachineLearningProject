@@ -12,18 +12,37 @@ import validation
 from sklearn.linear_model import LinearRegression
 import torch
 
-NetworArchitecture = [100, 1000, 1000, 100, 100]
-activation = "sigmoid"
+NetworArchitecture = [100, 1000]
+activation = "sigmoid" #are : "relu", "sigmoid", "tanh"
+Lastactivation = ""
 
-
-def newModel(D_in, D_out):
-    return torch.nn.Sequential(
-        torch.nn.Linear(D_in, NetworArchitecture[0]),
-        torch.nn.Sigmoid(),
-        torch.nn.Linear(NetworArchitecture[0], NetworArchitecture[1]),
-        #torch.nn.Sigmoid(),
-        #torch.nn.Linear(NetworArchitecture[1], D_out),
-    )
+def newModel(D_in):
+    network = []
+    size = len(NetworArchitecture)
+    network.append(torch.nn.Linear(D_in, NetworArchitecture[0]))
+    if activation == "sigmoid":
+        network.append(torch.nn.Sigmoid())
+    elif activation == "relu":
+        network.append(torch.nn.ReLU())
+    elif activation == "tanh":
+        network.append(torch.nn.Tanh())
+    for i in range(1, size-1):
+        network.append(torch.nn.Linear(
+            NetworArchitecture[i-1], NetworArchitecture[i]))
+        if activation == "sigmoid":
+            network.append(torch.nn.Sigmoid())
+        elif activation == "relu":
+            network.append(torch.nn.ReLU())
+        elif activation == "tanh":
+            network.append(torch.nn.Tanh())
+    network.append(torch.nn.Linear(NetworArchitecture[size-2], NetworArchitecture[size-1]))
+    if Lastactivation == "sigmoid":
+        network.append(torch.nn.Sigmoid())
+    elif Lastactivation == "relu":
+        network.append(torch.nn.ReLU())
+    elif activation == "tanh":
+        network.append(torch.nn.Tanh())
+    return torch.nn.Sequential(*network)
 
 def main():
     try:
@@ -43,7 +62,7 @@ def main():
     resultTest = []
     for train, test in kf.split(x_train):
         startTime = time.time()
-        model = newModel(input_dimention, NetworArchitecture[2])
+        model = newModel(input_dimention)
         X_train, x_test, Y_train, y_test = x_train[train], x_train[test], y_train[train], y_train[test]
         # Now we will sclae the data
         # We will fit the scaler with the training set and apply the trasformation also
