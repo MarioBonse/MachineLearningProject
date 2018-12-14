@@ -12,17 +12,17 @@ import validation
 from sklearn.linear_model import LinearRegression
 import torch
 
-NetworArchitecture = [100, 10000, 1000, 100, 100]
-activation = "relu"
+NetworArchitecture = [100, 1000, 1000, 100, 100]
+activation = "sigmoid"
 
 
 def newModel(D_in, D_out):
     return torch.nn.Sequential(
         torch.nn.Linear(D_in, NetworArchitecture[0]),
-        torch.nn.ReLU(),
+        torch.nn.Sigmoid(),
         torch.nn.Linear(NetworArchitecture[0], NetworArchitecture[1]),
-        torch.nn.ReLU(),
-        torch.nn.Linear(NetworArchitecture[1], D_out),
+        #torch.nn.Sigmoid(),
+        #torch.nn.Linear(NetworArchitecture[1], D_out),
     )
 
 def main():
@@ -39,9 +39,11 @@ def main():
     kf = KFold(n_splits=5)
     # scaler for NN
     scaler = StandardScaler()
-    result = []
+    resultVal = []
+    resultTest = []
     for train, test in kf.split(x_train):
-        model = newModel(input_dimention, output_dimention)
+        startTime = time.time()
+        model = newModel(input_dimention, NetworArchitecture[2])
         X_train, x_test, Y_train, y_test = x_train[train], x_train[test], y_train[train], y_train[test]
         # Now we will sclae the data
         # We will fit the scaler with the training set and apply the trasformation also
@@ -67,11 +69,21 @@ def main():
             yout = reg.predict(np.asmatrix(out))
             resultmoment = (yout - y_test[i, 0])**2
             score += resultmoment
-        score = score/np.shape(x_test)[0]
-        result.append(score)
+        scoreValidation = score/np.shape(x_test)[0]
+        resultVal.append(scoreValidation)
+        score = 0
+        for i in range(np.shape(X_train)[0]):
+            out = model(torch.from_numpy(X_train[i]).float())
+            out = out.detach().numpy()
+            yout = reg.predict(np.asmatrix(out))
+            resultmoment = (yout - Y_train[i, 0])**2
+            score += resultmoment
+        scoreTest = score/np.shape(X_train)[0]
+        resultTest.append(scoreTest)
+        print(time.time() - startTime)
         #loss_and_metrics = model.evaluate(x_train, y_train, batch_size=128)
-    print("Mean: %.2f +- %.3f" % (np.mean(result), np.std(result)))
-    print("\n\n",result)
+    print("Mean validation: %.2f +- %.3f" %(np.mean(resultVal), np.std(resultVal)))
+    print("Mean Test: %.2f +- %.3f" %(np.mean(resultTest), np.std(resultTest)))
     
 
 

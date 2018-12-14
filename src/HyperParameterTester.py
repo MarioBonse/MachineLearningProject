@@ -19,12 +19,12 @@ import csv
 ##################################################
 
 # Hiper parameters
-kernels = ['rbf', 'poly']
-C_range = [ 100]
-degree_range = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] #only in poly
+kernels = ['rbf']
+C_range = [0.0001,0.001,0.01,0.1,1,10,100,1000,10000,100000]
+degree_range = [7] #only in poly
 coef_range = [1]  # only in ply and sigmoid!
-gamma_range = 'scale'
-epsilon = [0.001]
+gamma_range = [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000, 100000]
+epsilon = 0.001
 
 class HyperParameterSVM:
     def __init__(self, C, gamma, epsilon, degree, kernel, coef):
@@ -53,6 +53,7 @@ class HyperParameterSVM:
 
 class HyperParameterTesterSVM:
     def __init__(self, kfoldDim):
+        e = epsilon
         self.kfoldDim = kfoldDim
         self.title = ["Validation mean", "Validation deviation", "Training mean", "Training deviation", "C", "epsilon", "gamma", "degree", "kernel", "coef",
                  "time"]
@@ -64,7 +65,7 @@ class HyperParameterTesterSVM:
         self.HyperParameterArray = []
         for k in kernels:
             for C in C_range:
-                for e in epsilon:
+                for gamma in gamma_range:
                     if k == 'poly':
                         for d in degree_range:
                             for coeff in coef_range:
