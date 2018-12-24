@@ -104,8 +104,7 @@ def main():
             scaler.fit(X_train)
             X_train = scaler.transform(X_train)
             x_test = scaler.transform(x_test)
-            history = model.fit(X_train, Y_train, shuffle = True, validation_data=(
-                x_test, y_test), epochs=epochs, batch_size=batch_size, verbose=0)
+            history = model.fit(X_train, Y_train, shuffle = True, validation_data=(x_test, y_test), epochs=epochs, batch_size=batch_size, verbose=0)
             # x_train and y_train are Numpy arrays --just like in the Scikit-Learn API.
             scores = model.evaluate(x_test, y_test, verbose=0)
             result.append(scores)
