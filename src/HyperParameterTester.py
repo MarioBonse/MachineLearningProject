@@ -76,13 +76,18 @@ class HyperParameterTesterSVM:
                     elif k == 'rbf':
                         self.HyperParameterArray.append(HyperParameterSVM(C, gamma, e, 0, k, 0))
 
-    def simulate(self, x_train, y_train):
+    def simulate(self, x_train, y_train, regression = True):
         writer = csv.writer(open("CSVResult/CSVResultDuringSimulation.csv", 'w'))
         writer.writerow(self.title)
         for simulation in self.HyperParameterArray:
             start_time = time.time()
-            svr = svm.SVR(kernel=simulation.kernel, gamma=simulation.gamma, coef0=simulation.coef, degree=simulation.degree, C = simulation.C, epsilon=simulation.epsilon)
-            SVRegressor = MultiOutputRegressor(svr, n_jobs=2)
+            if regression:
+                svr = svm.SVR(kernel=simulation.kernel, gamma=simulation.gamma, coef0=simulation.coef, degree=simulation.degree, C = simulation.C, epsilon=simulation.epsilon)
+                SVRegressor = MultiOutputRegressor(svr, n_jobs=2)
+            else:
+                SVRegressor = svm.SVC(kernel=simulation.kernel, gamma=simulation.gamma, coef0=simulation.coef, degree=simulation.degree, C = simulation.C)
+            
+            
             # I can evaluate the model also with cross Validation
             # CrossValidationScores = cross_val_score(SVRegressor, x_train, y_train, cv=5)
             # I can evaluate the model with kfold validation
