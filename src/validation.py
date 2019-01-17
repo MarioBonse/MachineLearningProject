@@ -60,6 +60,8 @@ def MeanEuclidianError(X,Y):
     #MEE = 1/N(sum(sqrt(x[i,0]-y[i,0]**2 + x[i,1]-y[i,1]**2))
     #can be weitten in a faster way as 1/N(sumnp.sqrt(float(x.dot(x)) - 2 * float(x.dot(y)) + float(y.dot(y))))
     out = 0
+    if Y.ndim == 1:
+        return sum(abs(X-Y))/Y.size     
     for x, y in zip(X, Y):
         out += np.sqrt(float(x.dot(x)) - 2 * float(x.dot(y)) + float(y.dot(y)))
     return out*2/(X.size)#X.size = 2*nelem -> i have to divide by two
