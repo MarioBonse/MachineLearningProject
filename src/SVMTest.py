@@ -10,7 +10,7 @@ import validation
 import numpy as np
 import matplotlib.pyplot as plt
 # plt: ":", "--", "-.", 
-
+# it test the variance if we change the training /valiation division
 def main():
     #data creation
     try:

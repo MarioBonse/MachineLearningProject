@@ -11,7 +11,11 @@ import matplotlib.pyplot as plt
 import time
 import validation
 import csv 
-
+############################################
+# That's the file that implement grid search along hyperparameters for the 
+# svm regressor
+#
+#
 ###########################################
 # SVM doesn't support multiple output
 # so I had to use the "multiple output library" of scikitlearn

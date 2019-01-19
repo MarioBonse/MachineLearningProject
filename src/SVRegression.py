@@ -2,7 +2,7 @@
 import HyperParameterTester
 import datacontrol
 
-
+# mail file for the gridsearch
 def main():
     #data creation
     try:
