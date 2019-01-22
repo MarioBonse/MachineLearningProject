@@ -30,5 +30,34 @@ def main():
     for train, test in kf.split(x_train):
         startTime = time.time()
         X_train, x_test, Y_train, y_test = x_train[train], x_train[test], y_train[train], y_train[test]
-        
+        # scaler
+        scaler.fit(X_train)
+        X_train = scaler.transform(X_train)
+        x_test = scaler.transform(x_test)
+
         reg = LinearRegression().fit(X_train, Y_train)
+        # result
+        y_2 = []
+        for i in range(np.shape(x_test)[0]):
+            yout = reg.predict(np.asmatrix(x_test[i]))
+            y_2.append(yout[0])
+            #score += resultmoment
+        scoreValidation = validation.MeanEuclidianError(np.array(y_2), y_test)
+        resultVal.append(scoreValidation)
+
+        y_2 = []
+        score = 0
+        for i in range(np.shape(X_train)[0]):
+            yout = reg.predict(np.asmatrix(X_train[i]))[0]
+            y_2.append(yout)
+            #resultmoment = (yout - Y_train[i, 0])**2
+            #score += resultmoment
+        scoreTest = validation.MeanEuclidianError(Y_train, np.array(y_2))
+        resultTest.append(scoreTest)
+        print(time.time() - startTime)
+        #loss_and_metrics = model.evaluate(x_train, y_train, batch_size=128)
+    print("Mean validation: %.2f +- %.3f" %(np.mean(resultVal), np.std(resultVal)))
+    print("Mean Test: %.2f +- %.3f" %(np.mean(resultTest), np.std(resultTest)))
+
+if __name__ == "__main__":
+    main()
