@@ -28,7 +28,7 @@ C_range = [0.0001,0.001,0.01,0.1,1,10,100,1000,10000,100000]
 degree_range = [7] #only in poly
 coef_range = [1]  # only in ply and sigmoid!
 gamma_range = [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000, 100000]
-epsilon = 0.001
+epsilon = [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000, 100000]
 
 class HyperParameterSVM:
     def __init__(self, C, gamma, epsilon, degree, kernel, coef):
@@ -73,12 +73,15 @@ class HyperParameterTesterSVM:
                     if k == 'poly':
                         for d in degree_range:
                             for coeff in coef_range:
-                                self.HyperParameterArray.append(HyperParameterSVM(C, gamma, e, d, k, coeff))
+                                for e in epsilon:
+                                    self.HyperParameterArray.append(HyperParameterSVM(C, gamma, e, d, k, coeff))
                     elif k == 'sigmoid':
                         for coeff in coef_range:
-                            self.HyperParameterArray.append(HyperParameterSVM(C, gamma, e, 0, k, coeff))
+                            for e in epsilon:
+                                self.HyperParameterArray.append(HyperParameterSVM(C, gamma, e, 0, k, coeff))
                     elif k == 'rbf':
-                        self.HyperParameterArray.append(HyperParameterSVM(C, gamma, e, 0, k, 0))
+                        for e in epsilon:
+                            self.HyperParameterArray.append(HyperParameterSVM(C, gamma, e, 0, k, 0))
 
     def simulate(self, x_train, y_train, regression = True):
         writer = csv.writer(open("CSVResult/CSVResultDuringSimulation.csv", 'w'))
@@ -87,7 +90,7 @@ class HyperParameterTesterSVM:
             start_time = time.time()
             if regression:
                 svr = svm.SVR(kernel=simulation.kernel, gamma=simulation.gamma, coef0=simulation.coef, degree=simulation.degree, C = simulation.C, epsilon=simulation.epsilon)
-                SVRegressor = MultiOutputRegressor(svr, n_jobs=2)
+                SVRegressor = MultiOutputRegressor(svr, n_jobs=8)
             else:
                 SVRegressor = svm.SVC(kernel=simulation.kernel, gamma=simulation.gamma, coef0=simulation.coef, degree=simulation.degree, C = simulation.C)
             

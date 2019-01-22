@@ -79,25 +79,28 @@ def main():
         reg = LinearRegression().fit(NN_output, Y_train)
         #reg = MultiOutputRegressor(LinearRegression(), n_jobs=2).fit(NN_output, Y_train)
         score = 0
-        reg = LinearRegression().fit(NN_output, Y_train[:, 0])
+        #reg = LinearRegression().fit(NN_output, Y_train)
         #reg = MultiOutputRegressor(LinearRegression(), n_jobs=2).fit(NN_output, Y_train)
         score = 0
+        y_2 = []
         for i in range(np.shape(x_test)[0]):
             out = model(torch.from_numpy(x_test[i]).float())
             out = out.detach().numpy()
             yout = reg.predict(np.asmatrix(out))
-            resultmoment = (yout - y_test[i, 0])**2
-            score += resultmoment
+            y_2.append(yout)
+            #score += resultmoment
         scoreValidation = score/np.shape(x_test)[0]
         resultVal.append(scoreValidation)
+        y_2 = []
         score = 0
         for i in range(np.shape(X_train)[0]):
             out = model(torch.from_numpy(X_train[i]).float())
             out = out.detach().numpy()
             yout = reg.predict(np.asmatrix(out))
-            resultmoment = (yout - Y_train[i, 0])**2
-            score += resultmoment
-        scoreTest = score/np.shape(X_train)[0]
+            y_2.append(yout[0])
+            #resultmoment = (yout - Y_train[i, 0])**2
+            #score += resultmoment
+        scoreTest = validation.MeanEuclidianError(Y_train, np.array(y_2))
         resultTest.append(scoreTest)
         print(time.time() - startTime)
         #loss_and_metrics = model.evaluate(x_train, y_train, batch_size=128)
