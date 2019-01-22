@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#../venv/bin/python3
 import numpy as np
 import pandas as pd
 import datacontrol
@@ -78,18 +78,16 @@ def main():
         NN_output = np.array(NN_output)
         reg = LinearRegression().fit(NN_output, Y_train)
         #reg = MultiOutputRegressor(LinearRegression(), n_jobs=2).fit(NN_output, Y_train)
-        score = 0
         #reg = LinearRegression().fit(NN_output, Y_train)
         #reg = MultiOutputRegressor(LinearRegression(), n_jobs=2).fit(NN_output, Y_train)
-        score = 0
         y_2 = []
         for i in range(np.shape(x_test)[0]):
             out = model(torch.from_numpy(x_test[i]).float())
             out = out.detach().numpy()
             yout = reg.predict(np.asmatrix(out))
-            y_2.append(yout)
+            y_2.append(yout[0])
             #score += resultmoment
-        scoreValidation = score/np.shape(x_test)[0]
+        scoreValidation = validation.MeanEuclidianError(np.array(y_2), y_test)
         resultVal.append(scoreValidation)
         y_2 = []
         score = 0

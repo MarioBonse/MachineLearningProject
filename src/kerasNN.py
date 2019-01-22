@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#../venv/bin/python3
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import Dropout
@@ -17,15 +17,15 @@ from sklearn.preprocessing import StandardScaler
 import validation
 
 
-NetworArchitecture = [100, 100, 100, 100, 100]
-activation = "relu"
-eta = 0.001
+NetworArchitecture = [1000, 1000]
+activation = "sigmoid"
+eta = 0.0001
 DropOutInput = 0
-DropOutHiddenLayer = 0
-epochs = 3000
-momentum = 0
-nesterov = False
-batch_size = 32
+DropOutHiddenLayer = 0.2
+epochs = 2000
+momentum = 0.9
+nesterov = True
+batch_size = 100
 Not_yet_printed = True
 
 #######################################################
@@ -89,7 +89,7 @@ def main():
         input_dimention = x_train.shape[1]
         output_dimention = y_train.shape[1]
         # Now we will use k_fold in order to validate the model
-        kf = KFold(n_splits=5)
+        kf = KFold(n_splits=4)
         
         # scaler for NN
         scaler = StandardScaler()
@@ -106,7 +106,9 @@ def main():
             x_test = scaler.transform(x_test)
             history = model.fit(X_train, Y_train, shuffle = True, validation_data=(x_test, y_test), epochs=epochs, batch_size=batch_size, verbose=0)
             # x_train and y_train are Numpy arrays --just like in the Scikit-Learn API.
-            scores = model.evaluate(x_test, y_test, verbose=0)
+            y_2 = model.predict(x_test)
+            scores = validation.MeanEuclidianError(y_2, y_test)
+            #scores = model.evaluate(x_test, y_test, verbose=0)
             result.append(scores)
             history_array.append(history)
             #loss_and_metrics = model.evaluate(x_train, y_train, batch_size=128)
