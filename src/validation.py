@@ -63,5 +63,5 @@ def MeanEuclidianError(X,Y):
     if Y.ndim == 1:
         return sum(abs(X-Y))/Y.size     
     for x, y in zip(X, Y):
-        out += np.sqrt(float(x.dot(x)) - 2 * float(x.dot(y)) + float(y.dot(y)))
+        out += np.sqrt(abs(loat(x.dot(x)) - 2 * float(x.dot(y)) + float(y.dot(y))))
     return out*2/(X.size)#X.size = 2*nelem -> i have to divide by two
