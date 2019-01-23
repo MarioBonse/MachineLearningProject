@@ -24,10 +24,10 @@ import csv
 
 # Hiper parameters
 kernels = ['rbf']
-C_range = np.linspace(1,100, 100)
+C_range = np.linspace(1,1000, 500)
 degree_range = [7] #only in poly
 coef_range = [1]  # only in ply and sigmoid!
-gamma_range = np.linspace(0.1,1,10)
+gamma_range =[0.5]
 epsilon = [0.001]
 
 class HyperParameterSVM:
