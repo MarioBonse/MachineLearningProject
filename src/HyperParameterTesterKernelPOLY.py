@@ -24,11 +24,11 @@ import csv
 
 # Hiper parameters
 kernels = ['poly']
-C_range =np.concatenate((np.linspace(0.1,1,10),np.linspace(1,10,10),np.linspace(10,100,10)))
+C_range =np.concatenate((np.linspace(0.1,1,30),np.linspace(1,10,30),np.linspace(10,100,30)))
 degree_range = np.linspace(4,8,5) #only in poly
 coef_range = [1]  # only in ply and sigmoid!
 gamma_range =[0.1]
-epsilon = [0.001]
+epsilon = [0.01]
 
 class HyperParameterSVM:
     def __init__(self, C, gamma, epsilon, degree, kernel, coef):
