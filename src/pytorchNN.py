@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!../venv/bin/python3
 import numpy as np
 import pandas as pd
 import datacontrol
@@ -19,7 +19,7 @@ nesterov = True
 batch_size = 200
 
 
-def newModule(D_in, D_out):
+def newModel(D_in, D_out):
     return torch.nn.Sequential(
         torch.nn.Linear(D_in, NetworArchitecture[0]),
         torch.nn.ReLU(),
@@ -35,7 +35,7 @@ def main():
         x_train, axis=0, with_mean=True, with_std=True, copy=True)
     input_dimention = x_train.shape[1]
     output_dimention = y_train.shape[1]
-    model = newModule(input_dimention, output_dimention)
+    model = newModel(input_dimention, output_dimention)
     optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
     loss_fn = torch.nn.MSELoss(reduction='sum')
     for epoch in range(n_epoch):

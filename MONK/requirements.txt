@@ -1,0 +1,11 @@
+
+jupyter
+Keras 
+numpy 
+pandas 
+scikit-learn 
+scipy 
+seaborn 
+tensorflow 
+torch 
+torchvision 
