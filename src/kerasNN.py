@@ -14,18 +14,19 @@ import tensorflow as tf
 import time
 from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
 import validation
 
 
-NetworArchitecture = [1000, 1000]
-activation = "sigmoid"
-eta = 0.0001
+NetworArchitecture = [100, 30, 30]
+activation = "relu"
+eta = 0.001
 DropOutInput = 0
-DropOutHiddenLayer = 0.2
-epochs = 2000
-momentum = 0.9
-nesterov = True
-batch_size = 100
+DropOutHiddenLayer = 0
+epochs = 500
+momentum = 0.4
+nesterov = False
+batch_size = 128
 Not_yet_printed = True
 
 #######################################################
@@ -113,13 +114,32 @@ class KerasNN():
         plt.legend(['train', 'test'], loc='upper left')
         plt.show()
 
-    def train(self, plot = False):
+
+    def trainValidation(self, X_train, Y_train, x_val, y_val, plot = False):
+        start_time = time.time()
+        input_dimention = X_train.shape[1]
+        output_dimention = Y_train.shape[1]
+        model = self.createModel(input_dimention, output_dimention)
+        scaler = StandardScaler()
+        scaler.fit(X_train)
+        X_train = scaler.transform(X_train)
+        x_val = scaler.transform(x_val)
+        history = model.fit(X_train, Y_train, shuffle = True, validation_data=(x_val, y_val), epochs=self.epochs, batch_size=self.batch_size, verbose=0)
+        # x_train and y_train are Numpy arrays --just like in the Scikit-Learn API.
+        y_2 = model.predict(x_val)
+        scores = validation.MeanEuclidianError(y_2, y_val)
+        print("%s: %.2f" % (model.metrics_names[0], scores))
+        print("time: %2f"%(time.time()-start_time))
+        val_loss_value = history.history['val_loss']
+        min_loss_valuation = np.argmin(val_loss_value)
+        if plot:
+            self.showresult(history)
+
+    def trainCV(self, x_train , y_train, plot = False):
         print("kerasNN\n")
         with tf.device('/device:GPU:0'):
             start_time = time.time()
             #data creation
-            TrainingData = datacontrol.readFile("../data/ML-CUP18-TR.csv")
-            x_train, y_train = datacontrol.divide(TrainingData)
             # preprocessing
             #x_train = sklearn.preprocessing.scale(x_train, axis=0, with_mean=True, with_std=True, copy=True)
             input_dimention = x_train.shape[1]
@@ -129,7 +149,8 @@ class KerasNN():
             
             # scaler for NN
             scaler = StandardScaler()
-            result = []
+            validationError = []
+            trainingError = []
             history_array = []
             for train, test in kf.split(x_train):
                 model = self.createModel(input_dimention, output_dimention)
@@ -141,31 +162,35 @@ class KerasNN():
                 X_train = scaler.transform(X_train)
                 x_test = scaler.transform(x_test)
                 history = model.fit(X_train, Y_train, shuffle = True, validation_data=(x_test, y_test), epochs=self.epochs, batch_size=self.batch_size, verbose=0)
-                # x_train and y_train are Numpy arrays --just like in the Scikit-Learn API.
                 y_2 = model.predict(x_test)
                 scores = validation.MeanEuclidianError(y_2, y_test)
-                #scores = model.evaluate(x_test, y_test, verbose=0)
-                result.append(scores)
+                validationError.append(scores)
+
+                y_2 = model.predict(X_train)
+                scores = validation.MeanEuclidianError(y_2, Y_train)
+                trainingError.append(scores)
                 history_array.append(history)
                 #loss_and_metrics = model.evaluate(x_train, y_train, batch_size=128)
-                print("%s: %.2f" % (model.metrics_names[0], scores))
-                print(scores)
-                val_loss_value = history.history['val_loss']
-                min_loss_valuation = np.argmin(val_loss_value)
-                print("Min loss on validation set was: %.2f on epoch %d" %(val_loss_value[min_loss_valuation], min_loss_valuation))
-
-            #for history in history_array:
-            #    showresult(history)
+                #print("%s: %.2f" % (model.metrics_names[0], scores))
+                #print(scores)
+                #val_loss_value = history.history['val_loss']
+                #min_loss_valuation = np.argmin(val_loss_value)
+                #print("Min loss on validation set was: %.2f on epoch %d" %(val_loss_value[min_loss_valuation], min_loss_valuation))
             print("\n Time: %.2f" % (time.time() - start_time))
-            print("%.2f (+/- %.2f)" %(np.mean(result), np.std(result)))
+            print("%.2f (+/- %.2f)" %(np.mean(validationError), np.std(validationError)))
+            print("%.2f (+/- %.2f)" %(np.mean(trainingError), np.std(trainingError)))
             if plot:
                 for res in history_array:
                     self.showresult(res)
+            return validationError, trainingError
 
 
 def main():
+    TrainingData = datacontrol.readFile("../data/ML-CUP18-TR.csv")
+    X, Y = datacontrol.divide(TrainingData)
+    X_train, X_test, y_train, y_test = train_test_split( X, Y, test_size=0.3, random_state=42)
     NN = KerasNN()
-    NN.train()
+    NN.trainValidation(X_train, y_train,X_test, y_test, plot=True)
 
 if __name__ == "__main__":
     main()

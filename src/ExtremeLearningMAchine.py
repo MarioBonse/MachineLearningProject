@@ -19,7 +19,7 @@ Lastactivation = ""
 alpha = 0.1
 
 class elm():
-    def __init__(self, NetworArchitecture =  [1000], activation =  "relu", alpha = 0.1, Lastactivation = "", n_split = 5):
+    def __init__(self, NetworArchitecture =  [2000], activation =  "relu", alpha = 0.1, Lastactivation = "", n_split = 5):
         self.NetworArchitecture = NetworArchitecture
         self.activation = activation #are : "relu", "sigmoid", "tanh"
         self.Lastactivation = Lastactivation
@@ -54,12 +54,36 @@ class elm():
             network.append(torch.nn.Tanh())
         return torch.nn.Sequential(*network)
 
-    def train(self):
-        try:
-            TrainingData = datacontrol.readFile("data/ML-CUP18-TR.csv")
-        except:
-            TrainingData = datacontrol.readFile("../data/ML-CUP18-TR.csv")
-        x_train, y_train = datacontrol.divide(TrainingData)
+    def fit(self,X_train, Y_train, scaler = True):
+        input_dimention = X_train.shape[1]
+        self.model = self.newModel(input_dimention)
+        if scaler:
+            self.scaler = StandardScaler()
+            self.scaler.fit(X_train)
+            X_train = self.scaler.transform(X_train)
+        else:
+            self.scaler = False
+        NN_output = []
+        for x in range(np.shape(X_train)[0]):
+            self.out = self.model(torch.from_numpy(X_train[x]).float())
+            self.out = self.out.detach().numpy()
+            NN_output.append(self.out)
+        NN_output = np.array(NN_output)
+        self.reg =  linear_model.Ridge(alpha=self.alpha).fit(NN_output, Y_train)
+
+    def predict(self, x_test):
+        if self.scaler:
+            x_test = self.scaler.transform(x_test)
+        y_out = []
+        for i in range(np.shape(x_test)[0]):
+            self.out = self.model(torch.from_numpy(x_test[i]).float())
+            self.out = self.out.detach().numpy()
+            yout = self.reg.predict(np.asmatrix(self.out))
+            y_out.append(np.squeeze(yout))
+        return np.array(y_out)
+
+
+    def trainCV(self, x_train, y_train):
         # preprocessing
         #x_train = sklearn.preprocessing.scale(x_train, axis=0, with_mean=True, with_std=True, copy=True)
         input_dimention = x_train.shape[1]
@@ -72,7 +96,6 @@ class elm():
         resultTraining = []
         for train, test in kf.split(x_train):
             startTime = time.time()
-            model = self.newModel(input_dimention)
             X_train, x_test, Y_train, y_test = x_train[train], x_train[test], y_train[train], y_train[test]
             # Now we will sclae the data
             # We will fit the scaler with the training set and apply the trasformation also
@@ -80,42 +103,27 @@ class elm():
             scaler.fit(X_train)
             X_train = scaler.transform(X_train)
             x_test = scaler.transform(x_test)
-            NN_output = []
-            for x in range(np.shape(X_train)[0]):
-                out = model(torch.from_numpy(X_train[x]).float())
-                out = out.detach().numpy()
-                NN_output.append(out)
-            NN_output = np.array(NN_output)
-            reg =  linear_model.Ridge(alpha=self.alpha).fit(NN_output, Y_train)
-            y_2 = []
-            for i in range(np.shape(x_test)[0]):
-                out = model(torch.from_numpy(x_test[i]).float())
-                out = out.detach().numpy()
-                yout = reg.predict(np.asmatrix(out))
-                y_2.append(yout[0])
-                #score += resultmoment
-            scoreValidation = validation.MeanEuclidianError(np.array(y_2), y_test)
+            self.fit(X_train, Y_train)
+            y_2 = self.predict(x_test)
+            scoreValidation = validation.MeanEuclidianError(y_2, y_test)
             resultVal.append(scoreValidation)
-            y_2 = []
-            score = 0
-            for i in range(np.shape(X_train)[0]):
-                out = model(torch.from_numpy(X_train[i]).float())
-                out = out.detach().numpy()
-                yout = reg.predict(np.asmatrix(out))
-                y_2.append(yout[0])
-                #resultmoment = (yout - Y_train[i, 0])**2
-                #score += resultmoment
-            scoreTest = validation.MeanEuclidianError(Y_train, np.array(y_2))
+            y_2 = self.predict(X_train)
+            scoreTest = validation.MeanEuclidianError(Y_train, y_2)
             resultTraining.append(scoreTest)
-            print(time.time() - startTime)
-            #loss_and_metrics = model.evaluate(x_train, y_train, batch_size=128)
+        # print the results
         print("Mean validation: %.2f +- %.3f" %(np.mean(resultVal), np.std(resultVal)))
         print("Mean training: %.2f +- %.3f" %(np.mean(resultTraining), np.std(resultTraining)))
+        print("Time: %.2f" % (time.time()-startTime))
         return resultVal, resultTraining
     
 def main():
+    try:
+        TrainingData = datacontrol.readFile("data/ML-CUP18-TR.csv")
+    except:
+        TrainingData = datacontrol.readFile("../data/ML-CUP18-TR.csv")
+    x_train, y_train = datacontrol.divide(TrainingData)
     ellm = elm()
-    ellm.train()
+    ellm.trainCV(x_train, y_train)
 
 if __name__ == "__main__":
     main()
