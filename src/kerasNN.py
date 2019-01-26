@@ -20,11 +20,11 @@ import validation
 
 NetworArchitecture = [100, 30, 30]
 activation = "relu"
-eta = 0.001
+eta = 0.0005
 DropOutInput = 0
 DropOutHiddenLayer = 0
 epochs = 500
-momentum = 0.4
+momentum = 0.6
 nesterov = False
 batch_size = 128
 Not_yet_printed = True
@@ -106,9 +106,9 @@ class KerasNN():
         loss_values = history.history['loss']
         val_loss_value = history.history['val_loss']
         epochs_array = range(1, self.epochs + 1)
-        plt.plot(epochs_array, loss_values, 'go', label='training loss')
+        plt.plot(epochs_array, loss_values, '.-r', label='training loss')
         plt.plot(epochs_array, val_loss_value, 'b', label='validation loss')
-        plt.title('yee')
+        plt.title('[500,500,500,500,500]')
         plt.xlabel('epochs')
         plt.ylabel('loss')
         plt.legend(['train', 'test'], loc='upper left')
@@ -124,7 +124,7 @@ class KerasNN():
         scaler.fit(X_train)
         X_train = scaler.transform(X_train)
         x_val = scaler.transform(x_val)
-        history = model.fit(X_train, Y_train, shuffle = True, validation_data=(x_val, y_val), epochs=self.epochs, batch_size=self.batch_size, verbose=0)
+        history = model.fit(X_train, Y_train, shuffle = True, validation_data=(x_val, y_val), epochs=self.epochs, batch_size=self.batch_size, verbose=1)
         # x_train and y_train are Numpy arrays --just like in the Scikit-Learn API.
         y_2 = model.predict(x_val)
         scores = validation.MeanEuclidianError(y_2, y_val)
@@ -189,7 +189,7 @@ def main():
     TrainingData = datacontrol.readFile("../data/ML-CUP18-TR.csv")
     X, Y = datacontrol.divide(TrainingData)
     X_train, X_test, y_train, y_test = train_test_split( X, Y, test_size=0.3, random_state=42)
-    NN = KerasNN()
+    NN = KerasNN(NetworArchitecture = [500, 500, 500, 500,500], activation = "relu", eta = 0.0001, momentum = 0.5, epochs = 100000)
     NN.trainValidation(X_train, y_train,X_test, y_test, plot=True)
 
 if __name__ == "__main__":
