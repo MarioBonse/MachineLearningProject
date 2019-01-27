@@ -32,7 +32,9 @@ Not_yet_printed = True
 #######################################################
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # If use drop out we should use the 
-#  kernel_initializer='normal', kernel_constraint=maxnorm(3))
+# 1) kernel_initializer='normal', kernel_constraint=maxnorm(3))
+# 2) Increase the learning rate and momentum
+# 3)the number units increased to n/(1-dropout)
 # as suggested on dropout paper
 ######################################################
 
@@ -106,9 +108,14 @@ class KerasNN():
         loss_values = history.history['loss']
         val_loss_value = history.history['val_loss']
         epochs_array = range(1, self.epochs + 1)
-        plt.plot(epochs_array, loss_values, '.-r', label='training loss')
-        plt.plot(epochs_array, val_loss_value, 'b', label='validation loss')
-        plt.title('[500,500,500,500,500]')
+        plt.plot(epochs_array, val_loss_value, 'b', label='validation error')
+        plt.plot(epochs_array, loss_values, '.-r', label='training error')
+        
+        title = "["
+        for num in self.NetworArchitecture:
+            title = title+str(num)+","
+        title = title[:-1]+"]"
+        plt.title(title)
         plt.xlabel('epochs')
         plt.ylabel('loss')
         plt.legend(['train', 'test'], loc='upper left')
@@ -189,7 +196,7 @@ def main():
     TrainingData = datacontrol.readFile("../data/ML-CUP18-TR.csv")
     X, Y = datacontrol.divide(TrainingData)
     X_train, X_test, y_train, y_test = train_test_split( X, Y, test_size=0.3, random_state=42)
-    NN = KerasNN(NetworArchitecture = [500, 500, 500, 500,500], activation = "relu", eta = 0.0001, momentum = 0.5, epochs = 100000)
+    NN = KerasNN(NetworArchitecture = [625, 625, 625, 625, 625], activation = "relu", eta = 0.00015, momentum = 0.95, epochs = 50000, DropOutHiddenLayer = 0.2)
     NN.trainValidation(X_train, y_train,X_test, y_test, plot=True)
 
 if __name__ == "__main__":
