@@ -73,7 +73,7 @@ class KerasNN():
     def __init__(self, NetworArchitecture = NetworArchitecture, activation = activation, DropOutHiddenLayer = DropOutHiddenLayer, DropOutInput = DropOutInput,epochs = epochs, eta = eta, momentum = momentum, nesterov = nesterov, batch_size = batch_size):
         pass
 
-    def createModel(self, input_dimention, output_dimention):
+    def createModel(self, input_dimention = 10, output_dimention= 2):
         model = Sequential()
         global Not_yet_printed
         if self.DropOutInput> 0:
@@ -118,11 +118,13 @@ class KerasNN():
         plt.title(title)
         plt.xlabel('epochs')
         plt.ylabel('loss')
-        plt.legend(['train', 'test'], loc='upper left')
+        plt.legend(loc='upper right')
         plt.show()
 
 
-    def trainValidation(self, X_train, Y_train, x_val, y_val, plot = False):
+    # Given a training set and a validation set it train and view the results
+    # on the validation set of course
+    def trainValidation(self, X_train, Y_train, x_val, y_val, plot = False, verbose = 0):
         start_time = time.time()
         input_dimention = X_train.shape[1]
         output_dimention = Y_train.shape[1]
@@ -131,17 +133,19 @@ class KerasNN():
         scaler.fit(X_train)
         X_train = scaler.transform(X_train)
         x_val = scaler.transform(x_val)
-        history = model.fit(X_train, Y_train, shuffle = True, validation_data=(x_val, y_val), epochs=self.epochs, batch_size=self.batch_size, verbose=1)
+        history = model.fit(X_train, Y_train, shuffle = True, validation_data=(x_val, y_val), epochs=self.epochs, batch_size=self.batch_size, verbose=verbose)
         # x_train and y_train are Numpy arrays --just like in the Scikit-Learn API.
         y_2 = model.predict(x_val)
         scores = validation.MeanEuclidianError(y_2, y_val)
         print("%s: %.2f" % (model.metrics_names[0], scores))
         print("time: %2f"%(time.time()-start_time))
-        val_loss_value = history.history['val_loss']
-        min_loss_valuation = np.argmin(val_loss_value)
+        return scores
         if plot:
             self.showresult(history)
 
+
+    # Function that, given the data trained the model 5 times with kfold CV
+    # Using the function of scikitlearn
     def trainCV(self, x_train , y_train, plot = False):
         print("kerasNN\n")
         with tf.device('/device:GPU:0'):
@@ -193,10 +197,13 @@ class KerasNN():
 
 
 def main():
-    TrainingData = datacontrol.readFile("../data/ML-CUP18-TR.csv")
+    try:
+        TrainingData = datacontrol.readFile("data/ML-CUP18-TR.csv")
+    except:
+        TrainingData = datacontrol.readFile("../data/ML-CUP18-TR.csv")
     X, Y = datacontrol.divide(TrainingData)
     X_train, X_test, y_train, y_test = train_test_split( X, Y, test_size=0.3, random_state=42)
-    NN = KerasNN(NetworArchitecture = [625, 625, 625, 625, 625], activation = "relu", eta = 0.00015, momentum = 0.95, epochs = 50000, DropOutHiddenLayer = 0.2)
+    NN = KerasNN(NetworArchitecture = [500, 500, 500, 500], activation = "relu", eta = 0.0004, momentum = 0.6, epochs = 200)
     NN.trainValidation(X_train, y_train,X_test, y_test, plot=True)
 
 if __name__ == "__main__":
