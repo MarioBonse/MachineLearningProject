@@ -70,7 +70,7 @@ def initializer(func):
 
 class KerasNN():
     @initializer
-    def __init__(self, NetworArchitecture = NetworArchitecture, activation = activation, DropOutHiddenLayer = DropOutHiddenLayer, DropOutInput = DropOutInput,epochs = epochs, eta = eta, momentum = momentum, nesterov = nesterov, batch_size = batch_size):
+    def __init__(self, NetworArchitecture = NetworArchitecture, activation = activation, DropOutHiddenLayer = DropOutHiddenLayer, DropOutInput = DropOutInput,epochs = epochs, eta = eta, momentum = momentum, nesterov = nesterov, batch_size = batch_size, decay = 0):
         pass
 
     def createModel(self, input_dimention = 10, output_dimention= 2):
@@ -101,7 +101,7 @@ class KerasNN():
                 model.add(Dense(units=node, activation=self.activation))
             Not_yet_printed = False
         model.add(Dense(units=output_dimention, activation = "linear"))
-        model.compile(loss=keras.losses.mean_squared_error, optimizer=keras.optimizers.SGD(lr=self.eta, momentum=self.momentum, nesterov=self.nesterov))
+        model.compile(loss=keras.losses.mean_squared_error, optimizer=keras.optimizers.SGD(lr=self.eta, momentum=self.momentum, nesterov=self.nesterov, decay=self.decay))
         return model
 
     def showresult(self, history):
@@ -109,12 +109,12 @@ class KerasNN():
         val_loss_value = history.history['val_loss']
         epochs_array = range(1, self.epochs + 1)
         plt.plot(epochs_array, val_loss_value, 'b', label='validation error')
-        plt.plot(epochs_array, loss_values, '.-r', label='training error')
-        
+        plt.plot(epochs_array, loss_values, '--r', label='training error')
+        plt.ylim((0,2.5))
         title = "["
         for num in self.NetworArchitecture:
             title = title+str(num)+","
-        title = title[:-1]+"]"
+        title = title[:-1]+"]"+ " LR = "+str(self.eta)
         plt.title(title)
         plt.xlabel('epochs')
         plt.ylabel('loss')
@@ -202,8 +202,8 @@ def main():
     except:
         TrainingData = datacontrol.readFile("../data/Development.csv")
     X, Y = datacontrol.divide(TrainingData)
-    X_train, X_test, y_train, y_test = train_test_split( X, Y, test_size=0.3, random_state=42)
-    NN = KerasNN(NetworArchitecture = [500, 500, 500, 500], activation = "relu", eta = 0.0004, momentum = 0.6, epochs = 200)
+    X_train, X_test, y_train, y_test = train_test_split( X, Y, test_size=0.2, random_state=42)
+    NN = KerasNN(NetworArchitecture = [125, 125, 125, 125], activation = "relu", eta = 0.0002, momentum = 0.99, epochs = 200, DropOutHiddenLayer=0.2)
     NN.trainValidation(X_train, y_train,X_test, y_test, plot=True)
 
 if __name__ == "__main__":
