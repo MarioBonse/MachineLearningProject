@@ -1,0 +1,9 @@
+\begin{tabular}{llrrrrr}
+\toprule
+{} &   name &  validation Mean Error &  validation std Error &  Training Mean Error &  Training std Error &       time \\
+\midrule
+0 &   2L50 &               1.042041 &              0.017701 &             0.900515 &            0.011431 &  13.711111 \\
+1 &  3L100 &               1.027890 &              0.016393 &             0.885067 &            0.010661 &  18.990329 \\
+2 &  5L500 &               1.008646 &              0.024042 &             0.868457 &            0.010661 &  81.424765 \\
+\bottomrule
+\end{tabular}

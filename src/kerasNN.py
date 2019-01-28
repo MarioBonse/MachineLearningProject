@@ -137,6 +137,9 @@ class KerasNN():
         # x_train and y_train are Numpy arrays --just like in the Scikit-Learn API.
         y_2 = model.predict(x_val)
         scores = validation.MeanEuclidianError(y_2, y_val)
+        val_loss_value = history.history['val_loss']
+        min_loss_valuation = np.argmin(val_loss_value)
+        print("Min loss on validation set was on epoch %d" % min_loss_valuation)
         print("%s: %.2f" % (model.metrics_names[0], scores))
         print("time: %2f"%(time.time()-start_time))
         if plot:
@@ -156,7 +159,7 @@ class KerasNN():
             input_dimention = x_train.shape[1]
             output_dimention = y_train.shape[1]
             # Now we will use k_fold in order to validate the model
-            kf = KFold(n_splits=4)
+            kf = KFold(n_splits=5)
             
             # scaler for NN
             scaler = StandardScaler()
@@ -184,9 +187,9 @@ class KerasNN():
                 #loss_and_metrics = model.evaluate(x_train, y_train, batch_size=128)
                 #print("%s: %.2f" % (model.metrics_names[0], scores))
                 #print(scores)
-                #val_loss_value = history.history['val_loss']
-                #min_loss_valuation = np.argmin(val_loss_value)
-                #print("Min loss on validation set was: %.2f on epoch %d" %(val_loss_value[min_loss_valuation], min_loss_valuation))
+                val_loss_value = history.history['val_loss']
+                min_loss_valuation = np.argmin(val_loss_value)
+                print("Min loss on validation set was on epoch %d" % min_loss_valuation)
             print("\n Time: %.2f" % (time.time() - start_time))
             print("%.2f (+/- %.2f)" %(np.mean(validationError), np.std(validationError)))
             print("%.2f (+/- %.2f)" %(np.mean(trainingError), np.std(trainingError)))
@@ -203,8 +206,8 @@ def main():
         TrainingData = datacontrol.readFile("../data/Development.csv")
     X, Y = datacontrol.divide(TrainingData)
     X_train, X_test, y_train, y_test = train_test_split( X, Y, test_size=0.2, random_state=42)
-    NN = KerasNN(NetworArchitecture = [125, 125, 125, 125], activation = "relu", eta = 0.0002, momentum = 0.99, epochs = 200, DropOutHiddenLayer=0.2)
-    NN.trainValidation(X_train, y_train,X_test, y_test, plot=True)
+    SMALL = KerasNN(NetworArchitecture = [50, 50], activation = "relu", eta = 0.0003, momentum = 0.9, epochs = 4000)
+    SMALL.trainCV(X, Y, plot=False)
 
 if __name__ == "__main__":
     main()
