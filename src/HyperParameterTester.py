@@ -23,12 +23,12 @@ import csv
 ##################################################
 
 # Hiper parameters
-kernels = ['poly']
-C_range =np.concatenate((np.linspace(0.1,1,10),np.linspace(1,10,10),np.linspace(10,100,10)))
-degree_range = np.linspace(4,8,5) #only in poly
+kernels = ['rbf']
+C_range = np.linspace(1,100,100)
+degree_range =[1] #only in poly
 coef_range = [1]  # only in ply and sigmoid!
-gamma_range =[0.1]
-epsilon = [0.001]
+gamma_range =[0.3,0.4, 0.5]
+epsilon = [0.01]
 
 class HyperParameterSVM:
     def __init__(self, C, gamma, epsilon, degree, kernel, coef):
@@ -118,8 +118,6 @@ class HyperParameterTesterSVM:
     def saveCSV(self):
         writer = csv.writer(open("CSVResult/CSVResultFinal.csv", 'w'))
         writer.writerow(self.title)
-        writer.writerow(["Validation mean", "Validation deviation", "Training mean", "Training deviation", "C", "epsilon", "gamma", "degree", "kernel", "coef",
-                         "time"])
         for results in self.HyperParameterArray:
             writer.writerow(results.getValue())
 

@@ -37,7 +37,6 @@ def RepeatedKFoldCross(trainCallback, predictcallback, x_train, y_train, n_split
         scaler = StandardScaler()
     valLoss = []
     TRLoss = []
-
     for train, test in kf.split(x_train):
         X_train, x_test, Y_train, y_test = x_train[train], x_train[test], y_train[train], y_train[test]
         if preprocessing:

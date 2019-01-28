@@ -14,9 +14,9 @@ import matplotlib.pyplot as plt
 def main():
     #data creation
     try:
-        TrainingData = datacontrol.readFile("../data/ML-CUP18-TR.csv")
+        TrainingData = datacontrol.readFile("../data/Development.csv")
     except:
-        TrainingData = datacontrol.readFile("data/ML-CUP18-TR.csv")
+        TrainingData = datacontrol.readFile("data/Development.csv")
     x_train, y_train = datacontrol.divide(TrainingData)
     svr = svm.SVR(kernel="rbf", gamma="scale", C=56)
     SVRegressor = MultiOutputRegressor(svr, n_jobs=2)

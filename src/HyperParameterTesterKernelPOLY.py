@@ -118,8 +118,6 @@ class HyperParameterTesterSVM:
     def saveCSV(self):
         writer = csv.writer(open("CSVResult/CSVResultFinal.csv", 'w'))
         writer.writerow(self.title)
-        writer.writerow(["Validation mean", "Validation deviation", "Training mean", "Training deviation", "C", "epsilon", "gamma", "degree", "kernel", "coef",
-                         "time"])
         for results in self.HyperParameterArray:
             writer.writerow(results.getValue())
 

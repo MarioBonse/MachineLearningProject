@@ -139,9 +139,9 @@ class KerasNN():
         scores = validation.MeanEuclidianError(y_2, y_val)
         print("%s: %.2f" % (model.metrics_names[0], scores))
         print("time: %2f"%(time.time()-start_time))
-        return scores
         if plot:
             self.showresult(history)
+        return scores
 
 
     # Function that, given the data trained the model 5 times with kfold CV
@@ -198,9 +198,9 @@ class KerasNN():
 
 def main():
     try:
-        TrainingData = datacontrol.readFile("data/ML-CUP18-TR.csv")
+        TrainingData = datacontrol.readFile("data/Development.csv")
     except:
-        TrainingData = datacontrol.readFile("../data/ML-CUP18-TR.csv")
+        TrainingData = datacontrol.readFile("../data/Development.csv")
     X, Y = datacontrol.divide(TrainingData)
     X_train, X_test, y_train, y_test = train_test_split( X, Y, test_size=0.3, random_state=42)
     NN = KerasNN(NetworArchitecture = [500, 500, 500, 500], activation = "relu", eta = 0.0004, momentum = 0.6, epochs = 200)

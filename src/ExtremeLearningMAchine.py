@@ -118,9 +118,9 @@ class elm():
     
 def main():
     try:
-        TrainingData = datacontrol.readFile("data/ML-CUP18-TR.csv")
+        TrainingData = datacontrol.readFile("data/Development.csv")
     except:
-        TrainingData = datacontrol.readFile("../data/ML-CUP18-TR.csv")
+        TrainingData = datacontrol.readFile("../data/Development.csv")
     x_train, y_train = datacontrol.divide(TrainingData)
     ellm = elm()
     ellm.trainCV(x_train, y_train)

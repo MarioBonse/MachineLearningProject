@@ -7,6 +7,12 @@ from scipy.integrate import trapz
 import datetime
 import sklearn.preprocessing
 from random import shuffle
+def createDevAndTest(TrainingData):
+    Dev = TrainingData[:-100]
+    Test = TrainingData[-100:]
+    pd.DataFrame(Dev).to_csv("../data/Development.csv",header = False)
+    pd.DataFrame(Dev).to_csv("../data/MyTest.csv",header = False)
+    return True
 
 def readFile(name):
     df = pd.read_csv(name, delimiter=',', comment='#', header=None)
