@@ -6,16 +6,21 @@ import seaborn as sns
 from scipy.integrate import trapz
 import datetime
 import sklearn.preprocessing
-from random import shuffle
+from sklearn.utils import shuffle
+
+
 def createDevAndTest(TrainingData):
+    shuffle(TrainingData)
     Dev = TrainingData[:-100]
     Test = TrainingData[-100:]
     pd.DataFrame(Dev).to_csv("../data/Development.csv",header = False)
-    pd.DataFrame(Dev).to_csv("../data/MyTest.csv",header = False)
+    pd.DataFrame(Test).to_csv("../data/MyTest.csv",header = False)
     return True
 
 def readFile(name):
     df = pd.read_csv(name, delimiter=',', comment='#', header=None)
+    df = shuffle(df)
+    df = df.reset_index(drop=True)
     df = df.astype(float)
     #in order to return numpy object 
     df_numpy = df.values[:, 1:]
@@ -74,4 +79,3 @@ def main():
         sns.boxplot(df[i])
     '''
     plt.show()
-
