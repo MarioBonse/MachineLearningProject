@@ -3,6 +3,7 @@
                Epochs &  validation Mean Error &  validation std Error &  Training Mean Error &  Training std Error &        time \\
 \midrule
 400 &               0.99 &              0.04 &              0.88 &            0.04 &  66s \\
- 5000 &               0.92 &              0.01 &              0.47 &            0.01 &  13m 44s \\
+5000 &               0.92 &              0.01 &              0.47 &            0.01 &  13m 44s \\
+10000 & 0.92 & 0.04 & 0.41 & 0.02 & 26m 7s \\ 
 \bottomrule
 \end{tabular}

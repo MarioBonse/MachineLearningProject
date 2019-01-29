@@ -60,5 +60,5 @@ def MeanEuclidianError(X,Y):
     #can be weitten in a faster way as 1/N(sumnp.sqrt(float(x.dot(x)) - 2 * float(x.dot(y)) + float(y.dot(y))))
     out = 0    
     for x, y in zip(X, Y):
-        out +=  np.sqrt(np.linalg.norm(x-y))
+        out +=  np.linalg.norm(x-y)
     return out/(X.shape[0])
