@@ -1,9 +1,9 @@
 \begin{tabular}{llrrrrr}
 \toprule
-{} &   name &  validation Mean Error &  validation std Error &  Training Mean Error &  Training std Error &        time \\
+{} &   name &  validation Mean Error &  validation std Error &  Training Mean Error &  Training std Error &       time \\
 \midrule
-0 &   2L50 &               1.029449 &              0.037466 &             0.896431 &            0.008932 &   35.893373 \\
-1 &  3L100 &               1.034295 &              0.043157 &             0.887932 &            0.016317 &   38.201622 \\
-2 &  5L500 &               1.012350 &              0.048296 &             0.871663 &            0.016317 &  173.862414 \\
+0 &   2L50 &               1.247298 &              0.083430 &             0.957714 &            0.015490 &  10.862880 \\
+1 &  3L100 &               1.230690 &              0.072449 &             0.920515 &            0.014096 &  13.476169 \\
+2 &  5L500 &               1.195289 &              0.070575 &             0.891194 &            0.014096 &  78.112393 \\
 \bottomrule
 \end{tabular}

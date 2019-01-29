@@ -1,2 +1,0 @@
-,name,validation Mean Error,validation std Error,Training Mean Error,Training std Error,time
-0,5L500+Dropout(0.8),0.9215476823593486,0.013198486044626256,0.472950265230648,0.013305399441536869,824.113104391098
