@@ -1,9 +1,9 @@
 \begin{tabular}{llrrrrr}
 \toprule
-               Epochs &  validation Mean Error &  validation std Error &  Training Mean Error &  Training std Error &        time \\
+{} &                 name &  validation Mean Error &  validation std Error &  Training Mean Error &  Training std Error &         time \\
 \midrule
-400 &               0.99 &              0.04 &              0.88 &            0.04 &  66s \\
-5000 &               0.92 &              0.01 &              0.47 &            0.01 &  13m 44s \\
-10000 & 0.92 & 0.04 & 0.41 & 0.02 & 26m 7s \\ 
+0 &  5L5000+Dropout(0.8) &               1.056972 &              0.072200 &             0.264151 &            0.051646 &   786.099951 \\
+1 &   5L500+Dropout(0.8) &               1.147640 &              0.081982 &             0.876876 &            0.051231 &    60.464303 \\
+2 &  5L1000+Dropout(0.8) &               1.026716 &              0.066113 &             0.206818 &            0.015705 &  1592.095707 \\
 \bottomrule
 \end{tabular}

@@ -38,13 +38,15 @@ def writeOutput(result, name):
     # Group Nickname
     # ML-CUP18
     # 02/11/2018
+    df = pd.DataFrame(result)
     now = datetime.datetime.now()
-    f = open(name, 'a')
-    f.write('# Sophie ?, Mario Bonsembiante\n')
-    f.write('# Booooo\n')
+    f = open(name, 'w')
+    f.write('# Alfredo Bochicchio, Mario Bonsembiante\n')
+    f.write('# Kape Vector Machine (KVM)\n')
     f.write('# ML-CUP18\n')
-    f.write('# ',str(now.day),'/',str(now.month),'/',str(now.year),'\n')
-    result.to_csv(f, sep='\t', encoding='utf-8')
+    f.write('# '+str(now.day)+'/'+str(now.month)+'/'+str(now.year)+'\n')
+    df.index += 1 
+    df.to_csv(f, sep=',', encoding='utf-8', header = False)
     f.close()
 
 # given a starting point a and ending point b (usually [-1,1]) rescaling the data froin the [a, b] interval
