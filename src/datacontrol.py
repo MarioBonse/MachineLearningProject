@@ -17,14 +17,15 @@ def createDevAndTest(TrainingData):
     pd.DataFrame(Test).to_csv("../data/MyTest.csv",header = False)
     return True
 
-def readFile(name):
+def readFile(name, shuff= True):
     df = pd.read_csv(name, delimiter=',', comment='#', header=None)
     df = shuffle(df)
     df = df.reset_index(drop=True)
     df = df.astype(float)
     #in order to return numpy object 
     df_numpy = df.values[:, 1:]
-    shuffle(df_numpy)
+    if shuff:
+        shuffle(df_numpy)
     return df_numpy
 
 # give a dataframe it divide it in two parts
